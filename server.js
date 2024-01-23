@@ -20,9 +20,11 @@ app.use(bodyParser.json());
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const chequeRoutes= require('./routes/chequeRoutes')
 
 app.use('/api/user', authRoutes);
 app.use('/api/company', companyRoutes);
+app.use('/api/cheque', chequeRoutes);
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
