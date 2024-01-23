@@ -64,7 +64,7 @@ exports.getPendingUsers = async (req, res) => {
 };
 
 // Delete Signup User's Pending
-exports.deletePendingUser = async (req, res) => {
+exports.deleteUser = async (req, res) => {
   const userId = req.params.id;
 
   try {

@@ -13,7 +13,7 @@ router.post('/signup', authController.signup);
 router.get('/pending-users', authMiddleware, authController.getPendingUsers);
 
 // Delete Signup User's Pending
-router.delete('/pending-users/:id', authMiddleware, authController.deletePendingUser);
+router.delete('/pending-users/:id', authMiddleware, authController.deleteUser);
 
 // Get Signup User's Approved List
 router.get('/approved-users', authMiddleware, authController.getApprovedUsers);
