@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI).then(()=>{
+  console.log("successfully connected with db.")
+}).catch((e)=>{
+  console.log("Error with connecting db.")
+});
 
 //Cors middleware
 app.use(cors())
@@ -21,10 +25,13 @@ app.use(bodyParser.json());
 const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const chequeRoutes= require('./routes/chequeRoutes')
+const rateOfTaxRoutes = require('./routes/rateOfTaxRoutes');
 
 app.use('/api/user', authRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/cheque', chequeRoutes);
+app.use('/api/rate-of-tax', rateOfTaxRoutes); 
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
