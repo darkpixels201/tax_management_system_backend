@@ -120,7 +120,7 @@ exports.deleteCompany = async (req, res) => {
       await user.save();
   
       // Delete the company
-      await company.remove();
+      await Company.deleteOne({ _id: companyId });
   
       res.json({ id: companyId, message: 'Company deleted successfully' });
     } catch (error) {
@@ -131,16 +131,17 @@ exports.deleteCompany = async (req, res) => {
 
 // Get All Users with their Companies
 exports.getAllUsersAndCompanies = async (req, res) => {
-    try {
-      const usersWithCompanies = await User.find({}).populate('companies', 'companyName showToAdmin -_id');
-      const formattedData = usersWithCompanies.map((user) => ({
-        username: user.username,
-        companies: user.companies,  
-      }));
-  
-      res.json(formattedData);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
+  try {
+    const usersWithCompanies = await User.find({}).populate('companies', 'companyName showToAdmin _id'); 
+    const formattedData = usersWithCompanies.map((user) => ({
+      username: user.username,
+      companies: user.companies.map(company => ({ companyName: company.companyName, showToAdmin: company.showToAdmin, companyId: company._id })), 
+    }));
+
+    res.json(formattedData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
   

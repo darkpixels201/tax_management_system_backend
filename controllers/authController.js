@@ -31,11 +31,15 @@ exports.signup = async (req, res) => {
     const { username, email, password} = req.body;
   
     try {
-      // Check if the email or username already exists
-      const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+      const ifUserExist = await User.findOne({ $or: [{ username }] });
+      const ifEmailExist = await User.findOne({ $or: [{ email }] });
   
-      if (existingUser) {
-        return res.status(400).json({ message: 'Email or username already exists' });
+      if (ifUserExist) {
+        return res.status(400).json({ message: 'Username already in Use' });
+      }
+
+      if (ifEmailExist) {
+        return res.status(400).json({ message: 'Email already in Use' });
       }
   
       const hashedPassword = await bcrypt.hash(password, 10);

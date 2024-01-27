@@ -3,7 +3,7 @@ const Cheque = require('../models/Cheque');
 
 // Create Cheque
 exports.createCheque = async (req, res) => {
-  const { bankName, checkNo, checkAmount } = req.body;
+  const { bankName, checkNo } = req.body;
 
   try {
     const user = await User.findById(req.userId);
@@ -15,7 +15,6 @@ exports.createCheque = async (req, res) => {
     const cheque = new Cheque({
       bankName,
       checkNo,
-      checkAmount,
       user: req.userId,
     });
 
@@ -57,7 +56,7 @@ exports.getChequeById = async (req, res) => {
 // Update Cheque
 exports.updateCheque = async (req, res) => {
   const chequeId = req.params.id;
-  const { bankName, checkNo, checkAmount } = req.body;
+  const { bankName, checkNo } = req.body;
 
   try {
     const cheque = await Cheque.findOne({ _id: chequeId, user: req.userId });
@@ -68,7 +67,6 @@ exports.updateCheque = async (req, res) => {
 
     cheque.bankName = bankName;
     cheque.checkNo = checkNo;
-    cheque.checkAmount = checkAmount;
 
     const updatedCheque = await cheque.save();
 
