@@ -24,5 +24,7 @@ router.patch('/update-user-type/:userId', authMiddleware, authController.updateU
 // Update User Status
 router.patch('/update-user-status/:userId', authMiddleware, authController.updateUserStatus);
 
+// Update Account Status
+router.put('/update-account-status', authController.updateAccountStatus);
 
 module.exports = router;

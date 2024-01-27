@@ -1,10 +1,8 @@
 const Ledger = require('../models/Ledger');
-
+const User = require('../models/User')
 // Create Ledger
 exports.createLedger = async (req, res) => {
   const {
-    date,
-    createdBy,
     companyName,
     bankName,
     chequeNo,
@@ -15,9 +13,18 @@ exports.createLedger = async (req, res) => {
   } = req.body;
 
   try {
+    const userId = req.userId;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     const newLedger = new Ledger({
-      date,
-      createdBy,
+      date: new Date(), 
+      createdBy:user.username,
       companyName,
       bankName,
       chequeNo,
@@ -33,6 +40,7 @@ exports.createLedger = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // Get All Ledgers
 exports.getAllLedgers = async (req, res) => {
@@ -65,8 +73,6 @@ exports.getLedgerById = async (req, res) => {
 exports.updateLedger = async (req, res) => {
   const ledgerId = req.params.id;
   const {
-    date,
-    createdBy,
     companyName,
     bankName,
     chequeNo,
@@ -74,14 +80,13 @@ exports.updateLedger = async (req, res) => {
     taxDeductionRate,
     underSection,
     taxAmount,
+    accessToDeleteLedger
   } = req.body;
 
   try {
     const updatedLedger = await Ledger.findByIdAndUpdate(
       ledgerId,
       {
-        date,
-        createdBy,
         companyName,
         bankName,
         chequeNo,
@@ -89,6 +94,7 @@ exports.updateLedger = async (req, res) => {
         taxDeductionRate,
         underSection,
         taxAmount,
+        accessToDeleteLedger
       },
       { new: true }
     );

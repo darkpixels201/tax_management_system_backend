@@ -22,4 +22,7 @@ router.delete('/delete-company/:id', authMiddleware, companyController.deleteCom
 // Get All Users and their Companies
 router.get('/all-users-and-companies', authMiddleware, companyController.getAllUsersAndCompanies);
 
+// Update ShowToAdmin Status
+router.put('/update-show-to-admin/:id', companyController.updateShowToAdminStatus);
+
 module.exports = router;

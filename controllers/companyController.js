@@ -144,4 +144,28 @@ exports.getAllUsersAndCompanies = async (req, res) => {
   }
 };
 
+
+// Update ShowToAdmin Status
+exports.updateShowToAdminStatus = async (req, res) => {
+  const companyId = req.params.id;
+  const { showToAdmin } = req.body;
+
+  try {
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    // Update the showToAdmin status
+    company.showToAdmin = showToAdmin;
+
+    // Save the updated company
+    await company.save();
+
+    res.json({ message: 'ShowToAdmin status updated successfully', company });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
   

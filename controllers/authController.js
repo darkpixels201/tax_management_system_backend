@@ -126,3 +126,20 @@ exports.updateUserType = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
+
+   // Update Account Status
+   exports.updateAccountStatus = async (req, res) => {
+    const { userId } = req.params;
+    const { accountStatus } = req.body;
+  
+    try {
+      const updatedUser = await User.findByIdAndUpdate(userId, { accountStatus }, { new: true });
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json({ id: updatedUser._id, status: updatedUser.accountStatus });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };

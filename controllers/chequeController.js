@@ -6,6 +6,13 @@ exports.createCheque = async (req, res) => {
   const { bankName, checkNo } = req.body;
 
   try {
+    // Check if the checkNo already exists
+    const existingCheque = await Cheque.findOne({ checkNo });
+
+    if (existingCheque) {
+      return res.status(400).json({ message: 'Cheque with the provided checkNo already exists' });
+    }
+
     const user = await User.findById(req.userId);
 
     if (!user) {
@@ -26,15 +33,49 @@ exports.createCheque = async (req, res) => {
   }
 };
 
+
 // Get All Cheques of User
 exports.getAllCheques = async (req, res) => {
   try {
     const cheques = await Cheque.find({ user: req.userId });
-    res.json(cheques);
+
+    const bankIdCounterMap = new Map();
+
+    const formattedCheques = [];
+
+    cheques.forEach((cheque) => {
+      const { bankName, checkNo, _id } = cheque;
+
+      if (!bankIdCounterMap.has(bankName)) {
+        bankIdCounterMap.set(bankName, 1);
+      }
+
+      const bankIdCounter = bankIdCounterMap.get(bankName);
+
+      const existingBankIndex = formattedCheques.findIndex((item) => item.bankName === bankName);
+
+      if (existingBankIndex === -1) {
+        formattedCheques.push({
+          bankName,
+          chequeNo: [{  chequeId: _id, chequeNo: checkNo }],
+        });
+      } else {
+        const existingBank = formattedCheques[existingBankIndex];
+        existingBank.chequeNo.push({  id: _id, chequeNo: checkNo });
+      }
+
+      bankIdCounterMap.set(bankName, bankIdCounter + 1);
+    });
+    formattedCheques.forEach((obj, index) => {
+      obj.id = index + 1;
+    });
+    res.json(formattedCheques);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 // Get Cheque by ID
 exports.getChequeById = async (req, res) => {
