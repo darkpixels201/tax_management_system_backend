@@ -64,7 +64,7 @@ exports.deleteRateOfTax = async (req, res) => {
   const rateOfTaxId = req.params.id;
 
   try {
-    const rateOfTax = await RateOfTax.findByIdAndRemove(rateOfTaxId);
+    const rateOfTax = await RateOfTax.findByIdAndDelete(rateOfTaxId);
 
     if (!rateOfTax) {
       return res.status(404).json({ message: 'Rate of Tax not found' });
