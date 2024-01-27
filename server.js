@@ -26,11 +26,13 @@ const authRoutes = require('./routes/authRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const chequeRoutes= require('./routes/chequeRoutes')
 const rateOfTaxRoutes = require('./routes/rateOfTaxRoutes');
+const underSectionRoutes = require('./routes/underSectionRoutes'); 
 
 app.use('/api/user', authRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/cheque', chequeRoutes);
 app.use('/api/rate-of-tax', rateOfTaxRoutes); 
+app.use('/api/under-section', underSectionRoutes); 
 
 // Start the server
 app.listen(PORT, () => {
