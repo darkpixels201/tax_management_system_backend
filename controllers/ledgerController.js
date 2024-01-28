@@ -1,5 +1,6 @@
 const Ledger = require('../models/Ledger');
 const User = require('../models/User')
+const Company = require('../models/Company')
 // Create Ledger
 exports.createLedger = async (req, res) => {
   const {
@@ -142,3 +143,28 @@ exports.getLedgersByCompanyName = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
+
+  // Get Ledgers by Company ID
+exports.getLedgersByCompanyId = async (req, res) => {
+  const companyId = req.params.companyId;
+
+  try {
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    // Get ledgers for the company name
+    const ledgers = await Ledger.find({ companyName: company.companyName });
+
+    if (!ledgers || ledgers.length === 0) {
+      return res.status(404).json({ message: 'No ledgers found for the specified company' });
+    }
+
+    res.json(ledgers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

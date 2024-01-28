@@ -5,14 +5,22 @@ exports.createUnderSection = async (req, res) => {
   const { underSection } = req.body;
 
   try {
+    // Check if underSection already exists
+    const existingUnderSection = await UnderSection.findOne({ underSection });
+
+    if (existingUnderSection) {
+      return res.status(400).json({ message: 'UnderSection with the given name already exists' });
+    }
+
     const newUnderSection = new UnderSection({ underSection });
     await newUnderSection.save();
 
     res.status(201).json({ message: 'UnderSection created successfully', underSection: newUnderSection });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get All UnderSections
 exports.getAllUnderSections = async (req, res) => {

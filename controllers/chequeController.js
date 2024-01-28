@@ -44,7 +44,7 @@ exports.getAllCheques = async (req, res) => {
     const formattedCheques = [];
 
     cheques.forEach((cheque) => {
-      const { bankName, checkNo, _id } = cheque;
+      const { bankName, checkNo, _id, created_at } = cheque;
 
       if (!bankIdCounterMap.has(bankName)) {
         bankIdCounterMap.set(bankName, 1);
@@ -57,11 +57,11 @@ exports.getAllCheques = async (req, res) => {
       if (existingBankIndex === -1) {
         formattedCheques.push({
           bankName,
-          chequeNo: [{  chequeId: _id, chequeNo: checkNo }],
+          chequeNo: [{  chequeId: _id, chequeNo: checkNo, created_at }],
         });
       } else {
         const existingBank = formattedCheques[existingBankIndex];
-        existingBank.chequeNo.push({  id: _id, chequeNo: checkNo });
+        existingBank.chequeNo.push({  id: _id, chequeNo: checkNo, created_at });
       }
 
       bankIdCounterMap.set(bankName, bankIdCounter + 1);
@@ -137,21 +137,55 @@ exports.deleteCheque = async (req, res) => {
 };
 
 // Get Cheques by Bank Name
+// Get All Cheques by Bank Name
 exports.getChequesByBank = async (req, res) => {
-    const bankName = req.params.bankName;
-  
-    try {
-      const cheques = await Cheque.find({ bankName });
-  
-      if (cheques.length === 0) {
-        return res.status(404).json({ message: 'No cheques found for the specified bank' });
-      }
-  
-      res.json(cheques);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+  const bankName = req.params.bankName;
+
+  try {
+    // Get all cheques for the bank
+    const cheques = await Cheque.find({ user: req.userId, bankName });
+
+    if (!cheques || cheques.length === 0) {
+      return res.status(404).json({ message: 'No cheques found for the specified bank' });
     }
-  };
+
+    const bankIdCounterMap = new Map();
+    const formattedCheques = [];
+
+    cheques.forEach((cheque) => {
+      const { bankName, checkNo, _id, created_at } = cheque;
+
+      if (!bankIdCounterMap.has(bankName)) {
+        bankIdCounterMap.set(bankName, 1);
+      }
+
+      const bankIdCounter = bankIdCounterMap.get(bankName);
+
+      const existingBankIndex = formattedCheques.findIndex((item) => item.bankName === bankName);
+
+      if (existingBankIndex === -1) {
+        formattedCheques.push({
+          bankName,
+          chequeNo: [{ chequeId: _id, chequeNo: checkNo,created_at  }],
+        });
+      } else {
+        const existingBank = formattedCheques[existingBankIndex];
+        existingBank.chequeNo.push({ id: _id, chequeNo: checkNo, created_at });
+      }
+
+      bankIdCounterMap.set(bankName, bankIdCounter + 1);
+    });
+
+    formattedCheques.forEach((obj, index) => {
+      obj.id = index + 1;
+    });
+
+    res.json(formattedCheques);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
   // Get Cheques of All Users
 exports.getAllChequesForAllUsers = async (req, res) => {
@@ -167,6 +201,7 @@ exports.getAllChequesForAllUsers = async (req, res) => {
         bankName: cheque.bankName,
         checkNo: cheque.checkNo,
         username: cheque.user.username,
+        created_at: cheque.created_at
       }));
   
       res.json(formattedData);

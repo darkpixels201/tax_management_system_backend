@@ -25,4 +25,5 @@ router.get('/all-users-and-companies', authMiddleware, companyController.getAllU
 // Update ShowToAdmin Status
 router.put('/update-show-to-admin/:id', companyController.updateShowToAdminStatus);
 
+
 module.exports = router;

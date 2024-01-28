@@ -10,7 +10,13 @@ exports.createCompany = async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-  
+     // Check if companyName already exists
+     const existingCompany = await Company.findOne({ companyName });
+
+     if (existingCompany) {
+      return res.status(400).json({ message: 'Company with the given name already exists' });
+     }
+
       const company = new Company({
         companyName,
         address,

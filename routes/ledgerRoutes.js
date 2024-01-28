@@ -21,4 +21,7 @@ router.delete('/delete-ledger/:id', authMiddleware, ledgerController.deleteLedge
 // Get Ledgers by Company Name
 router.get('/get-ledgers-by-company/:companyName', authMiddleware, ledgerController.getLedgersByCompanyName);
 
+// Get Ledgers by Company ID
+router.get('/ledgers-by-company/:companyId', ledgerController.getLedgersByCompanyId);
+
 module.exports = router;

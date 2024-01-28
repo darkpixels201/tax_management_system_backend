@@ -5,14 +5,22 @@ exports.createRateOfTax = async (req, res) => {
   const { taxDeductionRate } = req.body;
 
   try {
+    // Check if taxDeductionRate already exists
+    const existingRate = await RateOfTax.findOne({ taxDeductionRate });
+
+    if (existingRate) {
+      return res.status(400).json({ message: 'Rate of Tax with the given rate already exists' });
+    }
+
     const rateOfTax = new RateOfTax({ taxDeductionRate });
     await rateOfTax.save();
 
     res.status(201).json({ message: 'Rate of Tax created successfully', rateOfTax });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get All Rates of Tax
 exports.getAllRatesOfTax = async (req, res) => {
