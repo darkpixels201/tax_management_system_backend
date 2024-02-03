@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   accountStatus: { type: String, default: 'active' }, 
   companies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Company' }],
   cheques: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Cheque' }],
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
 
 const User = mongoose.model('User', userSchema);

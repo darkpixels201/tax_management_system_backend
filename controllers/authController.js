@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-
+const nodemailer=require("nodemailer")
 // Login
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -143,3 +143,73 @@ exports.updateUserType = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
+
+
+  // API to request password reset OTP
+exports.forgotPassword=async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate and save a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    user.resetPasswordToken = otp.toString();
+    user.resetPasswordExpires = Date.now() + 600000; // OTP expires in 10 minutes
+
+    await user.save();
+    const transporter = nodemailer.createTransport({
+      service: 'gmail', 
+      auth: {
+        user: process.env.EMAIL, 
+        pass: process.env.PASSWORD, 
+      },
+    });
+    // Send the OTP to the user's email
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: 'Password Reset OTP',
+      text: `Your OTP for password reset is: ${otp}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({ message: 'Error sending OTP via email' });
+      }
+      console.log(`Email sent: ${info.response}`);
+      res.status(200).json({ message: 'OTP sent successfully' });
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+
+exports.resetPassword=async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user || user.resetPasswordToken !== otp || Date.now() > user.resetPasswordExpires) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    // Reset the password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
