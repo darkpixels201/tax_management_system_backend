@@ -30,5 +30,10 @@ router.put('/update-account-status',authMiddleware, authController.updateAccount
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
 
+router.delete('/:userId',  authController.deleteUser)
 
+router.get('/:userId', authController.getUser) 
+
+router.put('/:userId',  authController.updateUser)
+ 
 module.exports = router;

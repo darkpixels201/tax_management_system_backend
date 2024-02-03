@@ -2,10 +2,20 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const nodemailer=require("nodemailer")
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail', 
+  auth: {
+    user: process.env.EMAIL, 
+    pass: process.env.PASSWORD, 
+  },
+});
 // Login
 exports.login = async (req, res) => {
     const { email, password } = req.body;
-  
+     if(!email || !password){
+      return res.status(404).json({ message: 'Email and Password both required.' });
+     }
     try {
       const user = await User.findOne({ email });
       if (!user) {
@@ -16,6 +26,22 @@ exports.login = async (req, res) => {
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid password' });
       }
+
+      // Send the OTP to the user's email
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: 'Login Alert',
+      text: `You just logged in with your account.`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("error")
+      }
+      console.log(`Email sent`);
+     
+    });
   
       // Generate JWT token
       const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -161,13 +187,7 @@ exports.forgotPassword=async (req, res) => {
     user.resetPasswordExpires = Date.now() + 600000; // OTP expires in 10 minutes
 
     await user.save();
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', 
-      auth: {
-        user: process.env.EMAIL, 
-        pass: process.env.PASSWORD, 
-      },
-    });
+    
     // Send the OTP to the user's email
     const mailOptions = {
       from: process.env.EMAIL,
@@ -195,7 +215,7 @@ exports.resetPassword=async (req, res) => {
     const { email, otp, newPassword } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user || user.resetPasswordToken !== otp || Date.now() > user.resetPasswordExpires) {
+    if (!user || !user.resetPasswordToken || user.resetPasswordToken !== otp || Date.now() > user.resetPasswordExpires) {
       return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
@@ -209,6 +229,59 @@ exports.resetPassword=async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+exports.deleteUser= async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getUser=async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const user = await User.findById(userId, 'username email type status accountStatus');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+exports.updateUser=async (req, res) => {
+  const userId = req.params.userId;
+  const { username, email, type, status, accountStatus } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { username, email, type, status, accountStatus },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User updated successfully', user: updatedUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
