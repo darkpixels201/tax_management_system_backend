@@ -11,6 +11,8 @@ exports.createLedger = async (req, res) => {
     taxDeductionRate,
     underSection,
     taxAmount,
+    NTN,  
+    rateOfTax, 
   } = req.body;
 
   try {
@@ -25,7 +27,7 @@ exports.createLedger = async (req, res) => {
 
     const newLedger = new Ledger({
       date: new Date(), 
-      createdBy:user.username,
+      createdBy: user.username,
       companyName,
       bankName,
       chequeNo,
@@ -33,7 +35,11 @@ exports.createLedger = async (req, res) => {
       taxDeductionRate,
       underSection,
       taxAmount,
+      NTN,  
+      rateOfTax,  
+      accessToDeleteLedger: false,  
     });
+
     await newLedger.save();
 
     res.status(201).json({ message: 'Ledger created successfully', ledger: newLedger });
@@ -41,7 +47,6 @@ exports.createLedger = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
 
 // Get All Ledgers
 exports.getAllLedgers = async (req, res) => {
@@ -70,6 +75,7 @@ exports.getLedgerById = async (req, res) => {
   }
 };
 
+
 // Update Ledger
 exports.updateLedger = async (req, res) => {
   const ledgerId = req.params.id;
@@ -81,7 +87,9 @@ exports.updateLedger = async (req, res) => {
     taxDeductionRate,
     underSection,
     taxAmount,
-    accessToDeleteLedger
+    accessToDeleteLedger,
+    NTN,  
+    rateOfTax,  
   } = req.body;
 
   try {
@@ -95,7 +103,9 @@ exports.updateLedger = async (req, res) => {
         taxDeductionRate,
         underSection,
         taxAmount,
-        accessToDeleteLedger
+        accessToDeleteLedger,
+        NTN,  
+        rateOfTax,  
       },
       { new: true }
     );
@@ -164,6 +174,31 @@ exports.getLedgersByCompanyId = async (req, res) => {
     }
 
     res.json(ledgers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update accessToDeleteLedger for a Ledger
+exports.updateAccessToDeleteLedger = async (req, res) => {
+  const ledgerId = req.params.id;
+  const { accessToDeleteLedger } = req.body;
+
+  try {
+    // Find the ledger by ID
+    const ledger = await Ledger.findById(ledgerId);
+
+    if (!ledger) {
+      return res.status(404).json({ message: 'Ledger not found' });
+    }
+
+    // Update accessToDeleteLedger property
+    ledger.accessToDeleteLedger = accessToDeleteLedger;
+
+    // Save the updated ledger
+    await ledger.save();
+
+    res.json({ message: 'accessToDeleteLedger updated successfully', ledger });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

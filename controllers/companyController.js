@@ -3,7 +3,7 @@ const User= require('../models/User')
 
 // Create Company
 exports.createCompany = async (req, res) => {
-    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn, taxDeduction, showToAdmin } = req.body;
+    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn,  showToAdmin } = req.body;
   
     try {
       const user = await User.findById(req.userId);
@@ -24,7 +24,6 @@ exports.createCompany = async (req, res) => {
         rateOfTax,
         underSection,
         ntn,
-        taxDeduction,
         showToAdmin,
         user: req.userId,
       });
@@ -70,7 +69,7 @@ exports.getCompany = async (req, res) => {
 // Update Company
 exports.updateCompany = async (req, res) => {
     const companyId = req.params.id;
-    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn, taxDeduction, showToAdmin } = req.body;
+    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn, showToAdmin } = req.body;
   
     try {
       // Find the company to be updated
@@ -87,7 +86,6 @@ exports.updateCompany = async (req, res) => {
       company.rateOfTax = rateOfTax;
       company.underSection = underSection;
       company.ntn = ntn;
-      company.taxDeduction = taxDeduction;
       company.showToAdmin = showToAdmin;
   
       // Save the updated company

@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Cheque = require('../models/Cheque');
-
+const Ledger = require('../models/Ledger')
 // Create Cheque
 exports.createCheque = async (req, res) => {
   const { bankName, checkNo } = req.body;
@@ -41,9 +41,14 @@ exports.getAllCheques = async (req, res) => {
 
     const bankIdCounterMap = new Map();
 
+    // Get the list of cheque numbers used in ledger
+    const usedChequeNumbers = await Ledger.distinct('chequeNo', { user: req.userId });
+
+    // Filter out cheques that are used in ledger
+    const filteredCheques = cheques.filter((cheque) => !usedChequeNumbers.includes(cheque.checkNo));
     const formattedCheques = [];
 
-    cheques.forEach((cheque) => {
+    filteredCheques.forEach((cheque) => {
       const { bankName, checkNo, _id, created_at } = cheque;
 
       if (!bankIdCounterMap.has(bankName)) {
@@ -136,7 +141,6 @@ exports.deleteCheque = async (req, res) => {
   }
 };
 
-// Get Cheques by Bank Name
 // Get All Cheques by Bank Name
 exports.getChequesByBank = async (req, res) => {
   const bankName = req.params.bankName;
@@ -166,7 +170,7 @@ exports.getChequesByBank = async (req, res) => {
       if (existingBankIndex === -1) {
         formattedCheques.push({
           bankName,
-          chequeNo: [{ chequeId: _id, chequeNo: checkNo,created_at  }],
+          chequeNo: [{ chequeId: _id, chequeNo: checkNo, created_at }],
         });
       } else {
         const existingBank = formattedCheques[existingBankIndex];
@@ -185,7 +189,6 @@ exports.getChequesByBank = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
   // Get Cheques of All Users
 exports.getAllChequesForAllUsers = async (req, res) => {

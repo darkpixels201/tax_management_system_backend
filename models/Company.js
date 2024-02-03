@@ -7,7 +7,6 @@ const companySchema = new mongoose.Schema({
   rateOfTax: { type: String, required: true },
   underSection: { type: String, required: true },
   ntn: { type: String, required: true, unique: true },
-  taxDeduction: { type: String, default: false },
   showToAdmin: { type: Boolean, default: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
