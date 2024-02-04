@@ -44,7 +44,9 @@ exports.createCompany = async (req, res) => {
 exports.getAllCompanies = async (req, res) => {
     try {
       const companies = await Company.find({ user: req.userId }).select('companyName showToAdmin');
-      res.json(companies);
+      const sortedCompanies = companies.sort((a, b) => a.companyName.localeCompare(b.companyName));
+
+      res.json({companies:sortedCompanies});
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
