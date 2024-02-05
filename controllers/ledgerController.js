@@ -10,6 +10,7 @@ exports.createLedger = async (req, res) => {
     chequeAmount,
     taxDeductionRate,
     underSection,
+    NTN,
     taxAmount,
     rateOfTax, 
   } = req.body;
@@ -35,6 +36,7 @@ exports.createLedger = async (req, res) => {
       underSection,
       taxAmount,
       rateOfTax,  
+      NTN,
       accessToDeleteLedger: false,  
     });
 
@@ -85,6 +87,7 @@ exports.updateLedger = async (req, res) => {
     taxDeductionRate,
     underSection,
     taxAmount,
+    NTN,
     accessToDeleteLedger,
     rateOfTax,  
   } = req.body;
@@ -99,6 +102,7 @@ exports.updateLedger = async (req, res) => {
         chequeAmount,
         taxDeductionRate,
         underSection,
+        NTN,
         taxAmount,
         accessToDeleteLedger,
         rateOfTax,  
@@ -138,27 +142,13 @@ exports.getLedgersByCompanyName = async (req, res) => {
     const companyName = req.params.companyName;
   
     try {
-        // Find the company by name
-    const company = await Company.findOne({ companyName });
+      const ledgers = await Ledger.find({ companyName });
 
-    if (!company) {
-      return res.status(404).json({ message: 'Company not found' });
-    }
+      if (!ledgers || ledgers.length === 0) {
+        return res.status(404).json({ message: 'No ledgers found for the specified company name' });
+      }
 
-    // Get ledgers for the company name
-    const ledgers = await Ledger.find({ companyName });
-
-    if (!ledgers || ledgers.length === 0) {
-      return res.status(404).json({ message: 'No ledgers found for the specified company name' });
-    }
-
-    // Add 'ntn' field from the company model to the response
-    const responseWithNtn = {
-      companyNtn: company.ntn,
-      ledgers: ledgers,
-    };
-
-    res.json({ledgers:responseWithNtn});
+      res.json(ledgers);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -182,12 +172,9 @@ exports.getLedgersByCompanyId = async (req, res) => {
     if (!ledgers || ledgers.length === 0) {
       return res.status(404).json({ message: 'No ledgers found for the specified company' });
     }
-     const ledgersWithNtn = ledgers.map((ledger) => ({
-      ...ledger.toObject(),
-      ntn: company.ntn,
-    }));
+     
 
-    res.json({ledgers:ledgersWithNtn });
+    res.json({ledgers });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
