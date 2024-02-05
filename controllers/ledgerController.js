@@ -10,7 +10,6 @@ exports.createLedger = async (req, res) => {
     chequeAmount,
     taxDeductionRate,
     underSection,
-    NTN,
     taxAmount,
     rateOfTax, 
   } = req.body;
@@ -36,7 +35,6 @@ exports.createLedger = async (req, res) => {
       underSection,
       taxAmount,
       rateOfTax,  
-      NTN,
       accessToDeleteLedger: false,  
     });
 
@@ -87,7 +85,6 @@ exports.updateLedger = async (req, res) => {
     taxDeductionRate,
     underSection,
     taxAmount,
-    NTN,
     accessToDeleteLedger,
     rateOfTax,  
   } = req.body;
@@ -102,7 +99,6 @@ exports.updateLedger = async (req, res) => {
         chequeAmount,
         taxDeductionRate,
         underSection,
-        NTN,
         taxAmount,
         accessToDeleteLedger,
         rateOfTax,  
