@@ -152,11 +152,15 @@ exports.getChequesByBank = async (req, res) => {
     if (!cheques || cheques.length === 0) {
       return res.status(404).json({ message: 'No cheques found for the specified bank' });
     }
+    // Get the list of cheque numbers used in ledger
+    const usedChequeNumbers = await Ledger.distinct('chequeNo');
 
+    // Filter out cheques that are used in ledger
+     const filteredCheques = cheques.filter((cheque) => !usedChequeNumbers.includes(cheque.checkNo));
     const bankIdCounterMap = new Map();
     const formattedCheques = [];
 
-    cheques.forEach((cheque) => {
+    filteredCheques.forEach((cheque) => {
       const { bankName, checkNo, _id, created_at } = cheque;
 
       if (!bankIdCounterMap.has(bankName)) {
