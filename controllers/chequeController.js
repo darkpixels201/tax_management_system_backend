@@ -42,7 +42,7 @@ exports.getAllCheques = async (req, res) => {
     const bankIdCounterMap = new Map();
 
     // Get the list of cheque numbers used in ledger
-    const usedChequeNumbers = await Ledger.distinct('chequeNo', { user: req.userId });
+    const usedChequeNumbers = await Ledger.distinct('chequeNo');
 
     // Filter out cheques that are used in ledger
     const filteredCheques = cheques.filter((cheque) => !usedChequeNumbers.includes(cheque.checkNo));
