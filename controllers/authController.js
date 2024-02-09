@@ -29,7 +29,7 @@ exports.login = async (req, res) => {
 
       // Send the OTP to the user's email
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: `"FACTS" <${process.env.EMAIL}>`,
       to: email,
       subject: 'Login Alert',
       text: `You just logged in with your account.`,
@@ -190,7 +190,7 @@ exports.forgotPassword=async (req, res) => {
     
     // Send the OTP to the user's email
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: `"FACTS" <${process.env.EMAIL}>`,
       to: email,
       subject: 'Password Reset OTP',
       text: `Your OTP for password reset is: ${otp}`,
