@@ -25,7 +25,7 @@ router.patch('/update-user-type/:userId', authMiddleware, authController.updateU
 router.patch('/update-user-status/:userId', authMiddleware, authController.updateUserStatus);
 
 // Update Account Status
-router.put('/update-account-status',authMiddleware, authController.updateAccountStatus);
+router.put('/update-account-status/:userId',authMiddleware, authController.updateAccountStatus);
 
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
