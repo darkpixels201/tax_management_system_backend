@@ -43,7 +43,7 @@ exports.createCompany = async (req, res) => {
 // Get All Companies
 exports.getAllCompanies = async (req, res) => {
     try {
-      const companies = await Company.find({ user: req.userId }).select('companyName showToAdmin');
+      const companies = await Company.find({ user: req.userId }).select('_id companyName showToAdmin ntn');
       const sortedCompanies = companies.sort((a, b) => a.companyName.localeCompare(b.companyName));
 
       res.json({companies:sortedCompanies});
