@@ -55,6 +55,13 @@ exports.updateUnderSection = async (req, res) => {
   const { underSection } = req.body;
 
   try {
+    // Check if underSection already exists
+    const existingUnderSection = await UnderSection.findOne({ underSection });
+
+   if (existingUnderSection) {
+      return res.status(400).json({ message: 'UnderSection with the given name already exists' });
+   }
+
     const updatedUnderSection = await UnderSection.findByIdAndUpdate(
       underSectionId,
       { underSection },

@@ -80,7 +80,13 @@ exports.updateCompany = async (req, res) => {
       if (!company) {
         return res.status(404).json({ message: 'Company not found' });
       }
-  
+      
+      // Check if companyName already exists
+     const existingCompany = await Company.findOne({ companyName: { $regex: new RegExp(companyName, "i") } });
+
+     if (existingCompany) {
+      return res.status(400).json({ message: 'Company with the given name already exists' });
+     }
       // Update the company fields
       company.companyName = companyName;
       company.address = address;

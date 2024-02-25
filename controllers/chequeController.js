@@ -128,13 +128,18 @@ exports.deleteCheque = async (req, res) => {
 
   try {
     const cheque = await Cheque.findOne({ _id: chequeId, user: req.userId });
-
+   
     if (!cheque) {
       return res.status(404).json({ message: 'Cheque not found' });
     }
 
-    await cheque.remove();
+   const isExistInLedger= await Ledger.findOne({chequeNo: cheque.chequeNo})
 
+   if(isExistInLedger){
+    return res.json({message: "Cannot delete this cheque because this is present in ledger."})
+   }
+    await Cheque.findByIdAndDelete(chequeId);
+    
     res.json({ id: chequeId, message: 'Cheque deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
