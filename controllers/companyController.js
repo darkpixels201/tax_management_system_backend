@@ -3,10 +3,10 @@ const User= require('../models/User')
 
 // Create Company
 exports.createCompany = async (req, res) => {
-    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn,  showToAdmin } = req.body;
+    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn,  showToAdmin, userId } = req.body;
   
     try {
-      const user = await User.findById(req.userId);
+      const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
