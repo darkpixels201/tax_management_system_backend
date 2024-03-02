@@ -10,7 +10,6 @@ const ledgerSchema = new mongoose.Schema({
   taxDeductionRate: { type: String, required: true },
   underSection: { type: String, required: true },
   taxAmount: { type: Number, required: true },
-  accessToDeleteLedger: { type: Boolean, default: false },
   rateOfTax: { type: String }, 
 });
 

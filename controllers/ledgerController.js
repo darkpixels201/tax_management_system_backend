@@ -35,7 +35,6 @@ exports.createLedger = async (req, res) => {
       underSection,
       taxAmount,
       rateOfTax,  
-      accessToDeleteLedger: false,  
     });
 
     await newLedger.save();
@@ -85,7 +84,6 @@ exports.updateLedger = async (req, res) => {
     taxDeductionRate,
     underSection,
     taxAmount,
-    accessToDeleteLedger,
     rateOfTax,  
   } = req.body;
 
@@ -100,7 +98,6 @@ exports.updateLedger = async (req, res) => {
         taxDeductionRate,
         underSection,
         taxAmount,
-        accessToDeleteLedger,
         rateOfTax,  
       },
       { new: true }
@@ -176,27 +173,3 @@ exports.getLedgersByCompanyId = async (req, res) => {
   }
 };
 
-// Update accessToDeleteLedger for a Ledger
-exports.updateAccessToDeleteLedger = async (req, res) => {
-  const ledgerId = req.params.id;
-  const { accessToDeleteLedger } = req.body;
-
-  try {
-    // Find the ledger by ID
-    const ledger = await Ledger.findById(ledgerId);
-
-    if (!ledger) {
-      return res.status(404).json({ message: 'Ledger not found' });
-    }
-
-    // Update accessToDeleteLedger property
-    ledger.accessToDeleteLedger = accessToDeleteLedger;
-
-    // Save the updated ledger
-    await ledger.save();
-
-    res.json({ message: 'accessToDeleteLedger updated successfully', ledger });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};

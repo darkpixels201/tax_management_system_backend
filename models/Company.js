@@ -8,6 +8,7 @@ const companySchema = new mongoose.Schema({
   underSection: [{ type: String, required: true }],
   ntn: { type: String, required: true, unique: true },
   showToAdmin: { type: Boolean, default: true },
+  accessToDeleteLedger: { type: Boolean, default: false },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 

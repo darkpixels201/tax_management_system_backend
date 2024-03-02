@@ -3,7 +3,7 @@ const User= require('../models/User')
 
 // Create Company
 exports.createCompany = async (req, res) => {
-    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn,  showToAdmin, userId } = req.body;
+    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn,  showToAdmin, userId, accessToDeleteLedger } = req.body;
   
     try {
       const user = await User.findById(userId);
@@ -26,6 +26,7 @@ exports.createCompany = async (req, res) => {
         ntn,
         showToAdmin,
         user: req.userId,
+        accessToDeleteLedger
       });
   
       // Add the new company to the user's companies array
@@ -43,7 +44,7 @@ exports.createCompany = async (req, res) => {
 // Get All Companies
 exports.getAllCompanies = async (req, res) => {
     try {
-      const companies = await Company.find({ user: req.userId }).select('_id companyName showToAdmin ntn');
+      const companies = await Company.find({ user: req.userId }).select('_id companyName showToAdmin ntn accessToDeleteLedger');
       const sortedCompanies = companies.sort((a, b) => a.companyName.localeCompare(b.companyName));
 
       res.json({companies:sortedCompanies});
@@ -71,7 +72,7 @@ exports.getCompany = async (req, res) => {
 // Update Company
 exports.updateCompany = async (req, res) => {
     const companyId = req.params.id;
-    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn, showToAdmin } = req.body;
+    const { companyName, address, natureOfWork, rateOfTax, underSection, ntn, showToAdmin, accessToDeleteLedger } = req.body;
   
     try {
       // Find the company to be updated
@@ -95,6 +96,7 @@ exports.updateCompany = async (req, res) => {
       company.underSection = underSection;
       company.ntn = ntn;
       company.showToAdmin = showToAdmin;
+      company.accessToDeleteLedger = accessToDeleteLedger
   
       // Save the updated company
       const updatedCompany = await company.save();
@@ -144,10 +146,10 @@ exports.deleteCompany = async (req, res) => {
 // Get All Users with their Companies
 exports.getAllUsersAndCompanies = async (req, res) => {
   try {
-    const usersWithCompanies = await User.find({}).populate('companies', 'companyName showToAdmin _id'); 
+    const usersWithCompanies = await User.find({}).populate('companies', 'companyName showToAdmin _id accessToDeleteLedger'); 
     const formattedData = usersWithCompanies.map((user) => ({
       username: user.username,
-      companies: user.companies.map(company => ({ companyName: company.companyName, showToAdmin: company.showToAdmin, companyId: company._id })), 
+      companies: user.companies.map(company => ({ companyName: company.companyName, showToAdmin: company.showToAdmin, companyId: company._id, accessToDeleteLedger: company.accessToDeleteLedger })), 
     }));
 
     res.json(formattedData);
