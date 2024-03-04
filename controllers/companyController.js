@@ -146,10 +146,10 @@ exports.deleteCompany = async (req, res) => {
 // Get All Users with their Companies
 exports.getAllUsersAndCompanies = async (req, res) => {
   try {
-    const usersWithCompanies = await User.find({}).populate('companies', 'companyName showToAdmin _id accessToDeleteLedger'); 
+    const usersWithCompanies = await User.find({}).populate('companies', 'companyName showToAdmin _id ntn accessToDeleteLedger'); 
     const formattedData = usersWithCompanies.map((user) => ({
       username: user.username,
-      companies: user.companies.map(company => ({ companyName: company.companyName, showToAdmin: company.showToAdmin, companyId: company._id, accessToDeleteLedger: company.accessToDeleteLedger })), 
+      companies: user.companies.map(company => ({ companyName: company.companyName, showToAdmin: company.showToAdmin, companyId: company._id, ntn: company.ntn, accessToDeleteLedger: company.accessToDeleteLedger })), 
     }));
 
     res.json(formattedData);
