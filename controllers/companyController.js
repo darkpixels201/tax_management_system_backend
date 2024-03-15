@@ -85,7 +85,7 @@ exports.updateCompany = async (req, res) => {
       // Check if companyName already exists
      const existingCompany = await Company.findOne({ companyName: { $regex: new RegExp(companyName, "i") } });
 
-     if (existingCompany) {
+     if (existingCompany && existingCompany.id!=company.id) {
       return res.status(400).json({ message: 'Company with the given name already exists' });
      }
       // Update the company fields
@@ -151,6 +151,21 @@ exports.getAllUsersAndCompanies = async (req, res) => {
       username: user.username,
       companies: user.companies.map(company => ({ companyName: company.companyName, showToAdmin: company.showToAdmin, companyId: company._id, ntn: company.ntn, accessToDeleteLedger: company.accessToDeleteLedger })), 
     }));
+
+    // Sort the companies based on companyName
+    formattedData.forEach(user => {
+         user.companies.sort((a, b) => {
+            const nameA = a.companyName.toUpperCase(); 
+            const nameB = b.companyName.toUpperCase(); 
+             if (nameA < nameB) {
+                 return -1;
+            }
+             if (nameA > nameB) {
+                return 1;
+             }
+      return 0; 
+     });
+   });
 
     res.json(formattedData);
   } catch (error) {

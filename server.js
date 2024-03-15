@@ -14,7 +14,10 @@ const ledgerRoutes = require('./routes/ledgerRoutes');
 const Company=require('./models/Company')
 const Ledger=require('./models/Ledger')
 const RateOfTax=require('./models/RateOfTax')
-const authMiddleware=require('./middlewares/authMiddleware')
+const User=require('./models/User')
+const Cheque=require('./models/Cheque')
+const UnderSection=require('./models/UnderSection')
+const authMiddleware=require('./middlewares/authMiddleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,12 +36,18 @@ app.use('/api/rate-of-tax', rateOfTaxRoutes);
 app.use('/api/under-section', underSectionRoutes); 
 app.use('/api/tax-deduction-rate', taxDeductionRateRoutes); 
 app.use('/api/ledger', ledgerRoutes);
-app.get('/get_count',authMiddleware,  async (req,res)=>{
+app.get('/api/get_count',authMiddleware,  async (req,res)=>{
   try{
     const companyCount=await Company.countDocuments()
     const ledgerCount= await Ledger.countDocuments()
+    const ledgerCountForUser= await Ledger.countDocuments({createdBy: req.userId})
+    const companyCountForUser=await Company.countDocuments({user: req.userId})
     const rateOfTaxCount=await RateOfTax.countDocuments()
-    res.json({companyCount, ledgerCount, rateOfTaxCount})
+    const approvedUsersCount = await User.countDocuments({ status: 'approve' });
+    const pendingUsersCount = await User.countDocuments({ status: 'pending' });
+    const chequeCount=await Cheque.countDocuments()
+    const UnderSectionCount=await UnderSection.countDocuments()
+    res.json({companyCount, ledgerCount, rateOfTaxCount,approvedUsersCount,pendingUsersCount ,chequeCount,UnderSectionCount, ledgerCountForUser,companyCountForUser})
   }
   catch(e){
     res.status(500).json({ message: error.message });
