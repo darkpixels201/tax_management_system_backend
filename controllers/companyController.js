@@ -53,12 +53,28 @@ exports.getAllCompanies = async (req, res) => {
     }
   };
 
+// Get Single Company for logged in user
+exports.getMyCompany = async (req, res) => {
+  const companyId = req.params.id;
+
+  try {
+    const company = await Company.findOne({ _id: companyId, user: req.userId });
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    res.json(company);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get Single Company
 exports.getCompany = async (req, res) => {
   const companyId = req.params.id;
 
   try {
-    const company = await Company.findOne({ _id: companyId, user: req.userId });
+    const company = await Company.findOne({ _id: companyId });
     if (!company) {
       return res.status(404).json({ message: 'Company not found' });
     }

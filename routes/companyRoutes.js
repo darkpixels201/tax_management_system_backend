@@ -10,7 +10,10 @@ router.post('/create-company', authMiddleware, companyController.createCompany);
 // Get All Companies
 router.get('/all-companies', authMiddleware, companyController.getAllCompanies);
 
-// Get Single Company
+// Get Single Company for logged in user
+router.get('/my_company/:id', authMiddleware, companyController.getMyCompany);
+
+// Get Single Company 
 router.get('/company/:id', authMiddleware, companyController.getCompany);
 
 // Update Company
