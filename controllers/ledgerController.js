@@ -4,7 +4,7 @@ const Company = require('../models/Company')
 // Create Ledger
 exports.createLedger = async (req, res) => {
   const {
-    companyName,
+    companyId,
     bankName,
     chequeNo,
     chequeAmount,
@@ -27,7 +27,7 @@ exports.createLedger = async (req, res) => {
     const newLedger = new Ledger({
       date: new Date(), 
       createdBy: user.username,
-      companyName,
+      companyId,
       bankName,
       chequeNo,
       chequeAmount,
@@ -77,7 +77,7 @@ exports.getLedgerById = async (req, res) => {
 exports.updateLedger = async (req, res) => {
   const ledgerId = req.params.id;
   const {
-    companyName,
+    companyId,
     bankName,
     chequeNo,
     chequeAmount,
@@ -91,7 +91,7 @@ exports.updateLedger = async (req, res) => {
     const updatedLedger = await Ledger.findByIdAndUpdate(
       ledgerId,
       {
-        companyName,
+        companyId,
         bankName,
         chequeNo,
         chequeAmount,
@@ -132,10 +132,10 @@ exports.deleteLedger = async (req, res) => {
 
 // Get Ledgers by Company Name
 exports.getLedgersByCompanyName = async (req, res) => {
-    const companyName = req.params.companyName;
+    const companyId = req.params.companyId;
   
     try {
-      const ledgers = await Ledger.find({ companyName });
+      const ledgers = await Ledger.find({ companyId });
 
       if (!ledgers || ledgers.length === 0) {
         return res.status(404).json({ message: 'No ledgers found for the specified company name' });
@@ -160,7 +160,7 @@ exports.getLedgersByCompanyId = async (req, res) => {
     }
 
     // Get ledgers for the company name
-    const ledgers = await Ledger.find({ companyName: company.companyName });
+    const ledgers = await Ledger.find({ companyId: company.id });
 
     if (!ledgers || ledgers.length === 0) {
       return res.status(404).json({ message: 'No ledgers found for the specified company' });

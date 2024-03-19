@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ledgerSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   createdBy: { type: String, required: true },
-  companyName: { type: String, required: true },
+  companyId: { type: String, required: true },
   bankName: { type: String, required: true },
   chequeNo: { type: String, required: true },
   chequeAmount: { type: Number, required: true },
