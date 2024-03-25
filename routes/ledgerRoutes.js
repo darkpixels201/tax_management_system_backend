@@ -18,9 +18,6 @@ router.put('/update-ledger/:id', authMiddleware, ledgerController.updateLedger);
 // Delete Ledger
 router.delete('/delete-ledger/:id', authMiddleware, ledgerController.deleteLedger);
 
-// Get Ledgers by Company Name
-router.get('/get-ledgers-by-company/:companyName', authMiddleware, ledgerController.getLedgersByCompanyName);
-
 // Get Ledgers by Company ID
 router.get('/ledgers-by-company/:companyId',authMiddleware, ledgerController.getLedgersByCompanyId);
 

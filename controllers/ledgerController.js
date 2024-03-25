@@ -49,7 +49,21 @@ exports.createLedger = async (req, res) => {
 exports.getAllLedgers = async (req, res) => {
   try {
     const ledgers = await Ledger.find();
-    res.json(ledgers);
+    let updatedLedgers=[]
+    for (let i = 0; i < ledgers.length; i++) {
+      let ledger = ledgers[i];
+
+      ledger = ledger.toObject();
+
+      const company = await Company.findById(ledger.companyId);
+
+      if (company) {
+        ledger.companyName = company.companyName;
+      } 
+      updatedLedgers.push(ledger)
+    }
+
+    res.json({ledgers:updatedLedgers});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -60,12 +74,21 @@ exports.getLedgerById = async (req, res) => {
   const ledgerId = req.params.id;
 
   try {
-    const ledger = await Ledger.findById(ledgerId);
+    let ledger = await Ledger.findById(ledgerId);
 
     if (!ledger) {
       return res.status(404).json({ message: 'Ledger not found' });
     }
 
+    const company = await Company.findById(ledger.companyId);
+
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+    ledger = ledger.toObject();
+
+    ledger.companyName = company.companyName;
+    
     res.json(ledger);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -130,22 +153,7 @@ exports.deleteLedger = async (req, res) => {
   }
 };
 
-// Get Ledgers by Company Name
-exports.getLedgersByCompanyName = async (req, res) => {
-    const companyId = req.params.companyId;
-  
-    try {
-      const ledgers = await Ledger.find({ companyId });
 
-      if (!ledgers || ledgers.length === 0) {
-        return res.status(404).json({ message: 'No ledgers found for the specified company name' });
-      }
-
-      res.json(ledgers);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
 
   // Get Ledgers by Company ID
 exports.getLedgersByCompanyId = async (req, res) => {
