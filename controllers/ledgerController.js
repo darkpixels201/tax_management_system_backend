@@ -63,7 +63,7 @@ exports.getAllLedgers = async (req, res) => {
       updatedLedgers.push(ledger)
     }
 
-    res.json({ledgers:updatedLedgers});
+    res.json({...updatedLedgers});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -175,7 +175,7 @@ exports.getLedgersByCompanyId = async (req, res) => {
     }
      
 
-    res.json({ledgers });
+    res.json({...ledgers });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
