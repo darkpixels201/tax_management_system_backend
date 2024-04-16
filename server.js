@@ -27,6 +27,10 @@ app.use(cors({
   origin: ['http://localhost:3000', 'https://darkpixels-tax.shop', 'http://darkpixels-tax.shop']
 }));
 
+app.get('/', (req, res) => {
+  res.send('<h3>Tax Management System</h3>');
+});
+
 // Middleware
 app.use(bodyParser.json());
 
