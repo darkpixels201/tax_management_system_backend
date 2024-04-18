@@ -23,8 +23,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //Cors middleware
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://darkpixels-tax.shop', 'http://darkpixels-tax.shop']
+  origin: '*'
 }));
 
 // Middleware
