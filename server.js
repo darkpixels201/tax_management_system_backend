@@ -29,18 +29,25 @@ const PORT = process.env.PORT || 3000;
 // }));
 
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://darkpixels-tax.shop");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "http://darkpixels-tax.shop");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 
-app.options('*', function(req, res) {
-  res.header("Access-Control-Allow-Origin", "http://darkpixels-tax.shop");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.status(200).send();
-});
+// app.options('*', function(req, res) {
+//   res.header("Access-Control-Allow-Origin", "http://darkpixels-tax.shop");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   res.status(200).send();
+// });
+
+const corsOptions ={
+  origin:'https://darkpixels-tax.shop', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 
 
 
