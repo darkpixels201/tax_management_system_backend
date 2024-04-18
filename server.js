@@ -22,11 +22,11 @@ const authMiddleware=require('./middlewares/authMiddleware');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-//Cors middleware
+// Cors middleware
 
-// app.use(cors({
-//   origin: '*'
-// }));
+app.use(cors({
+  origin: '*'
+}));
 
 
 // app.use(function(req, res, next) {
@@ -42,12 +42,12 @@ const PORT = process.env.PORT || 3000;
 //   res.status(200).send();
 // });
 
-const corsOptions ={
-  origin:'https://darkpixels-tax.shop', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
+// const corsOptions ={
+//   origin:'https://darkpixels-tax.shop', 
+//   credentials:true,            //access-control-allow-credentials:true
+//   optionSuccessStatus:200
+// }
+// app.use(cors(corsOptions));
 
 
 
