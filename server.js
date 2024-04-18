@@ -36,6 +36,13 @@ app.use(function(req, res, next) {
 });
 
 
+app.options('*', function(req, res) {
+  res.header("Access-Control-Allow-Origin", "http://darkpixels-tax.shop");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.status(200).send();
+});
+
+
 
 app.get('/', (req, res) => {
   res.send('<h3>Tax Management System</h3>');
