@@ -24,9 +24,18 @@ const PORT = process.env.PORT || 3000;
 
 //Cors middleware
 
-app.use(cors({
-  origin: '*'
-}));
+// app.use(cors({
+//   origin: '*'
+// }));
+
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://darkpixels-tax.shop");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+
 
 app.get('/', (req, res) => {
   res.send('<h3>Tax Management System</h3>');
