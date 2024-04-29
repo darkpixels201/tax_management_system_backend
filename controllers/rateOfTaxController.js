@@ -55,6 +55,11 @@ exports.updateRateOfTax = async (req, res) => {
   const { taxDeductionRate } = req.body;
 
   try {
+    const existingRate = await RateOfTax.findOne({ taxDeductionRate });
+
+    if (existingRate) {
+      return res.status(400).json({ message: 'Rate of Tax with the given rate already exists' });
+    }
     const rateOfTax = await RateOfTax.findByIdAndUpdate(rateOfTaxId, { taxDeductionRate }, { new: true });
 
     if (!rateOfTax) {
