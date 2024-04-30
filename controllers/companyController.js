@@ -59,7 +59,7 @@ exports.getMyCompany = async (req, res) => {
   try {
     const companies = await Company.find({ user: req.userId });
     if (companies.length==0) {
-      return res.status(404).json({ message: `Company not found` , });
+      return res.status(404).json({ message: 'Company not found' });
     }
 
     res.json(companies);
