@@ -25,7 +25,7 @@ exports.createCompany = async (req, res) => {
         underSection,
         ntn,
         showToAdmin,
-        user: req.userId,
+        user: userId,
         accessToDeleteLedger
       });
   
@@ -59,7 +59,7 @@ exports.getMyCompany = async (req, res) => {
   try {
     const companies = await Company.find({ user: req.userId });
     if (companies.length==0) {
-      return res.status(404).json({ message: 'Companies not found' });
+      return res.status(404).json({ message: `Company not found` , });
     }
 
     res.json(companies);
