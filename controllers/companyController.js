@@ -85,6 +85,23 @@ exports.getMyCompany = async (req, res) => {
   }
 };
 
+
+// Get Single Company 
+exports.getSingleCompany = async (req, res) => {
+  try {
+    const companies = await Company.findOne({ user: req.userId });
+    if (companies.length == 0) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    res.json(companies);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 // Get Single Company
 exports.getCompany = async (req, res) => {
   const companyId = req.params.id;
