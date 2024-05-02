@@ -78,7 +78,6 @@ exports.getMyCompany = async (req, res) => {
     if (companies.length == 0) {
       return res.status(404).json({ message: "Company not found" });
     }
-    console.log("companies",companies)
     res.json(companies);
   } catch (error) {
     res.status(500).json({ message: error.message });
