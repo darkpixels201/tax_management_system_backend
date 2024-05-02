@@ -59,9 +59,9 @@ app.use(cors({
 
 
 
-app.get('/', (req, res) => {
-  res.send('<h3>Tax Management System</h3>');
-});
+// app.get('/', (req, res) => {
+//   res.send('<h3>Tax Management System</h3>');
+// });
 
 // Middleware
 app.use(bodyParser.json());
